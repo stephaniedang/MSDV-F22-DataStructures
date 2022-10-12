@@ -22,6 +22,8 @@ $('tr').each(function(i, elem) {
 
 function parseData(tr) {
   
+// some parts of HTML differed from when done in Observable notebook - spent a lot of time working backwards with larger chunks of HTML
+// and re-mapping back on where to split to get necessary info
   let locationFinal = tr.split('<h4 style="margin:0;padding:0;">')[1].split('</h4><br>')[0]
   let addressFinal = tr.split('</b><br>\n' +
       '\t\t\t\t\t\t')[1].split(', \n')[0]
@@ -46,6 +48,8 @@ function parseData(tr) {
     const meetingType = restEnd.split('<br><b>')
     const finalType = meetingType[0].split('\t\t\t')[0]
     
+//     struggled with finding a consistent pattern to parse out state and zip code from data - decided to keep 
+//     that lumped together for now in "additional address info" object
     meetings.push({
       location: locationFinal,
       address: addressFinal,
