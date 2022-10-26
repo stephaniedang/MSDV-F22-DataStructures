@@ -11,30 +11,39 @@ var content = fs.readFileSync('data/m01.txt');
 var $ = cheerio.load(content);
 
 var meetings = [];
+
 $('tr').each(function(i, elem) {
     if ($(elem).attr("style")=="margin-bottom:10px") {
         // console.log($(elem).html());
         // console.log('*************')
         // var thisMeeting = {}; // Your function and data collection go here! 
-        parseData($(elem).html())
+        let row = $(elem).html()
+        parseData(row)
     }
 });
 
 function parseData(tr) {
   
-// some parts of HTML differed from when done in Observable notebook - spent a lot of time working backwards with larger chunks of HTML
-// and re-mapping back on where to split to get necessary info
+// address and location parsing
   let locationFinal = tr.split('<h4 style="margin:0;padding:0;">')[1].split('</h4><br>')[0]
   let addressFinal = tr.split('</b><br>\n' +
-      '\t\t\t\t\t\t')[1].split(', \n')[0]
-//   let stateFinal = tr.split('</b><br>\n' +
+      '\t\t\t\t\t\t')[1].split(', \n')[0].split(',')[0]
+  //  let stateFinal = tr.split('</b><br>\n' +
 //       '\t\t\t\t\t\t')[1]
-//   let zipFinal = tr.split('</b><br>\n' +
-//       '\t\t\t\t\t\t')[1]
+  // let zipFinal = tr.split('</b><br>\n' +
+  //     '\t\t\t\t\t\t')[1]
+  // let zipFinal = tr.split('<br>')
   let additionalAddressInfo = tr.split('\t\t\t\t\t\t')[2].replace('<br>','').replace('\n','')
-  
+  let zipArray = additionalAddressInfo.match(/\d{5}/)
+  let zip
+  if(zipArray === null) {
+    zip = 'N/A'
+  } else {
+    zip = zipArray[0]
+  }
   let meetingDay = tr.split('\t\t\t\t  \t    <b>').slice(2)
   
+// meeting day and time parsing
   meetingDay.forEach(function(item,index) {
     const startDays = item.split('From</b>')
     const finalDays = startDays[0]
@@ -48,13 +57,11 @@ function parseData(tr) {
     const meetingType = restEnd.split('<br><b>')
     const finalType = meetingType[0].split('\t\t\t')[0]
     
-//     struggled with finding a consistent pattern to parse out state and zip code from data - decided to keep 
-//     that lumped together for now in "additional address info" object
     meetings.push({
       location: locationFinal,
       address: addressFinal,
     //   state: stateFinal,
-    //   zip: zipCodeFinal,
+      zip: zip,
       additionalAddressInfo: additionalAddressInfo,
       day: finalDays.trim(),
       startTime: finalStart.trim(),
@@ -67,4 +74,4 @@ function parseData(tr) {
 //   console.log(meetings)
 }
 
-// console.log(meetings)
+console.log(meetings)
