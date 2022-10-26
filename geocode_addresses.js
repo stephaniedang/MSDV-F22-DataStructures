@@ -49,11 +49,11 @@ async.eachSeries(addresses, function(value, callback) {
                     // console.log(response.data.OutputGeocodes)
                     console.log(geocode)
                     
+                    addressGeocodes.address = value
                     addressGeocodes.latLong.lat = geocode.Latitude
                     addressGeocodes.latLong.long = geocode.Longitude
-                    addressGeocodes.address = value
                     
-                    console.log(response.data)
+                    // console.log(response.data)
                     // push address and geocodes to array
                     meetingsData.push(addressGeocodes);
                     console.log(meetingsData)
